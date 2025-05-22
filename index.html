@@ -16,7 +16,7 @@
             <span id="invoiceNumber">در حال بارگذاری...</span>
 
             <script>
-            fetch("https://script.google.com/macros/s/AKfycbzbjtnnJbkc-iQkgErl6fjcDiwCniqZl2CWegy9UzT1LOtFcSHhwworrDcJqfOxGtkq9A/exec") // جایگزین با لینک Google Apps Script
+            fetch("https://script.google.com/macros/s/AKfycbyyKmGsK4K3twzgWa2ktXNkssHbwtv45zQhk7A7gsi6TruWmkZ_mUSDt-m-aYxkW9kSww/exec") // جایگزین با لینک Google Apps Script
                   .then(response => response.text())
                   .then(data => {
                     document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${data}`;
