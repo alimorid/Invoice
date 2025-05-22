@@ -114,6 +114,12 @@ button:hover {
     transform: scale(1.05);
 }
 
+#invoiceNumber {
+    font-size: 18px;
+    font-weight: bold;
+    color: #00ff88;
+}
+
 @media (max-width: 600px) {
     .invoice-container {
         width: 95%;
