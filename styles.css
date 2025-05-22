@@ -49,10 +49,21 @@ input {
     text-align: center;
 }
 
+.payment-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    font-size: 18px;
+}
+
+.payment-method {
+    text-align: right;
+}
+
 .total {
+    text-align: left;
     font-size: 18px;
     font-weight: bold;
-    margin-top: 20px;
 }
 
 button {
