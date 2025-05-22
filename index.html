@@ -13,7 +13,16 @@
 
         <div class="header-info">
             <span>تاریخ: <span id="date"></span></span>
-            <span>شماره فاکتور: 1001</span>
+            <span id="invoiceNumber">در حال بارگذاری...</span>
+
+            <script>
+            fetch("https://script.google.com/macros/s/AKfycbzbjtnnJbkc-iQkgErl6fjcDiwCniqZl2CWegy9UzT1LOtFcSHhwworrDcJqfOxGtkq9A/exec") // جایگزین با لینک Google Apps Script
+                  .then(response => response.text())
+                  .then(data => {
+                    document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${data}`;
+                  })
+                  .catch(error => console.error("خطا در دریافت شماره فاکتور:", error));
+            </script>
         </div>
 
         <div class="divider">محصولات</div>
