@@ -1,80 +1,29 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
-<meta charset="UTF-8">
-<title>فرم فاکتور</title>
-<script>
-// تابع تبدیل میلادی به شمسی (Jalali)
-function toJalali(gy, gm, gd) {
-  var g_d_m = [0,31,59,90,120,151,181,212,243,273,304,334];
-  var jy;
-  if(gy > 1600){
-    jy = 979;
-    gy -= 1600;
-  }else{
-    jy = 0;
-    gy -= 621;
-  }
-  var gy2 = (gm > 2) ? (gy + 1) : gy;
-  var days = 365*gy + Math.floor((gy2+3)/4) - Math.floor((gy2+99)/100) + Math.floor((gy2+399)/400) - 80 + gd + g_d_m[gm-1];
-  jy += 33*Math.floor(days/12053);
-  days %= 12053;
-  jy += 4*Math.floor(days/1461);
-  days %= 1461;
-  if(days > 365){
-    jy += Math.floor((days-1)/365);
-    days = (days-1)%365;
-  }
-  var jm = (days < 186) ? 1 + Math.floor(days/31) : 7 + Math.floor((days-186)/30);
-  var jd = 1 + ((days < 186) ? (days % 31) : ((days - 186) % 30));
-  return [jy, jm, jd];
-}
-
-function setTodayDate() {
-  var today = new Date();
-  var jalali = toJalali(today.getFullYear(), today.getMonth() + 1, today.getDate());
-  var formatted = jalali[0] + '/' + (jalali[1]<10 ? '0'+jalali[1] : jalali[1]) + '/' + (jalali[2]<10 ? '0'+jalali[2] : jalali[2]);
-  document.getElementById('date').value = formatted;
-}
-
-window.onload = setTodayDate;
-</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فرم فاکتور فروش</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h2>فرم ثبت فاکتور</h2>
-  <form id="invoiceForm">
-    <label>تاریخ (شمسی): </label>
-    <input type="text" id="date" name="date" readonly><br><br>
+    <div class="invoice-container">
+        <h2>فاکتور فروش</h2>
+        <form>
+            <label for="customer">نام مشتری:</label>
+            <input type="text" id="customer" name="customer" required>
 
-    <label>شماره فاکتور: </label>
-    <input type="number" id="invoiceNumber" name="invoiceNumber" required><br><br>
+            <label for="product">نام محصول:</label>
+            <input type="text" id="product" name="product" required>
 
-    <label>نام مشتری: </label>
-    <input type="text" id="customerName" name="customerName" required><br><br>
+            <label for="quantity">تعداد:</label>
+            <input type="number" id="quantity" name="quantity" required>
 
-    <label>شماره تماس: </label>
-    <input type="text" id="phoneNumber" name="phoneNumber"><br><br>
+            <label for="price">قیمت واحد:</label>
+            <input type="number" id="price" name="price" required>
 
-    <label>آدرس: </label>
-    <textarea id="address" name="address"></textarea><br><br>
-
-    <label>مبلغ کل: </label>
-    <input type="number" id="totalAmount" name="totalAmount" required><br><br>
-
-    <label>نوع پرداخت: </label>
-    <select id="paymentType" name="paymentType">
-      <option value="نقد">نقد</option>
-      <option value="کارت">کارت</option>
-    </select><br><br>
-
-    <button type="button" onclick="submitForm()">ثبت فاکتور</button>
-  </form>
-
-  <script>
-  function submitForm() {
-    // اینجا باید کدی بنویسی که داده‌ها رو به گوگل شیت یا سرور بفرسته
-    alert('فعلا فقط فرم رو داری! باید کد سمت سرور بزنی تا داده ذخیره بشه.');
-  }
-  </script>
+            <button type="submit">ثبت فاکتور</button>
+        </form>
+    </div>
 </body>
 </html>
