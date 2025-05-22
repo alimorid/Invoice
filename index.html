@@ -9,7 +9,7 @@
 <body>
     <div class="invoice-container">
         <h2>فاکتور فروش</h2>
-        
+
         <div class="header-info">
             <span>تاریخ: <span id="date"></span></span>
             <span>شماره فاکتور: 1001</span>
@@ -35,8 +35,17 @@
             <span>فی: 10,000 تومان</span>
         </div>
 
-        <div class="total">
-            <strong>صورتحساب: <span id="totalAmount">0</span> تومان</strong>
+        <div class="payment-section">
+            <div class="total">
+                <strong>صورتحساب: <span id="totalAmount">0</span> تومان</strong>
+            </div>
+            <div class="payment-method">
+                <label for="payment">نحوه پرداخت:</label>
+                <select id="payment">
+                    <option value="card">کارت</option>
+                    <option value="cash">نقد</option>
+                </select>
+            </div>
         </div>
 
         <button type="submit" id="submitBtn">ثبت فاکتور</button>
@@ -45,7 +54,6 @@
     <script>
         document.getElementById("date").innerText = new Date().toLocaleDateString("fa-IR");
 
-        // محاسبه مجموع خرید
         document.querySelectorAll(".quantity").forEach(input => {
             input.addEventListener("input", () => {
                 let total = 0;
