@@ -3,27 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>فرم فاکتور فروش</title>
+    <title>فاکتور فروش</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="invoice-container">
         <h2>فاکتور فروش</h2>
-        <form>
-            <label for="customer">نام مشتری:</label>
-            <input type="text" id="customer" name="customer" required>
+        
+        <div class="header-info">
+            <span>تاریخ: <span id="date"></span></span>
+            <span>شماره فاکتور: 1001</span>
+        </div>
 
-            <label for="product">نام محصول:</label>
-            <input type="text" id="product" name="product" required>
+        <div class="divider">محصولات</div>
 
-            <label for="quantity">تعداد:</label>
-            <input type="number" id="quantity" name="quantity" required>
+        <div class="product">
+            <span>فلافل:</span>
+            <input type="number" class="quantity" data-price="45000" placeholder="تعداد">
+            <span>فی: 45,000 تومان</span>
+        </div>
 
-            <label for="price">قیمت واحد:</label>
-            <input type="number" id="price" name="price" required>
+        <div class="product">
+            <span>همبرگر:</span>
+            <input type="number" class="quantity" data-price="70000" placeholder="تعداد">
+            <span>فی: 70,000 تومان</span>
+        </div>
 
-            <button type="submit">ثبت فاکتور</button>
-        </form>
+        <div class="product">
+            <span>نوشابه:</span>
+            <input type="number" class="quantity" data-price="10000" placeholder="تعداد">
+            <span>فی: 10,000 تومان</span>
+        </div>
+
+        <div class="total">
+            <strong>صورتحساب: <span id="totalAmount">0</span> تومان</strong>
+        </div>
+
+        <button type="submit" id="submitBtn">ثبت فاکتور</button>
     </div>
+
+    <script>
+        document.getElementById("date").innerText = new Date().toLocaleDateString("fa-IR");
+
+        // محاسبه مجموع خرید
+        document.querySelectorAll(".quantity").forEach(input => {
+            input.addEventListener("input", () => {
+                let total = 0;
+                document.querySelectorAll(".quantity").forEach(qty => {
+                    let price = parseInt(qty.getAttribute("data-price"));
+                    let count = parseInt(qty.value) || 0;
+                    total += price * count;
+                });
+                document.getElementById("totalAmount").innerText = total.toLocaleString("fa-IR");
+            });
+        });
+    </script>
 </body>
 </html>
