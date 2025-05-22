@@ -13,16 +13,35 @@
 
         <div class="header-info">
             <span>تاریخ: <span id="date"></span></span>
-            <span id="invoiceNumber">در حال بارگذاری...</span>
+<span id="invoiceNumber">در حال بارگذاری...</span>
 
-            <script>
-            fetch("https://script.google.com/macros/s/AKfycbzVKWKhQtm2EO6pB6bP-6oNR2LrEpMz3MX6N8iCJJj_9yP9gGsknXOvtb_EB7f75X3x3A/exec") // جایگزین با لینک Google Apps Script
-                  .then(response => response.text())
-                  .then(data => {
-                    document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${data}`;
-                  })
-                  .catch(error => console.error("خطا در دریافت شماره فاکتور:", error));
-            </script>
+<script>
+  function getEffectiveDate() {
+    const now = new Date();
+    const offset = 7 * 60 * 60 * 1000; // 7 ساعت به میلی‌ثانیه
+    const shifted = new Date(now.getTime() - offset);
+    return shifted.toLocaleDateString("fa-IR-u-nu-latn"); // مثل: 1403/03/02
+  }
+
+  function getInvoiceNumber() {
+    const today = getEffectiveDate();
+    const current = JSON.parse(localStorage.getItem("todayInvoice") || "{}");
+
+    if (current.date !== today) {
+      // شروع از 1 در روز جدید (بر اساس ساعت 7 صبح)
+      localStorage.setItem("todayInvoice", JSON.stringify({ date: today, count: 1 }));
+      return 1;
+    } else {
+      current.count += 1;
+      localStorage.setItem("todayInvoice", JSON.stringify(current));
+      return current.count;
+    }
+  }
+
+  const number = getInvoiceNumber();
+  document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${number}`;
+</script>
+
         </div>
 
         <div class="divider">محصولات</div>
