@@ -103,9 +103,9 @@ function collectFormData() {
   const falafelQty = parseInt(document.getElementById("falafelQty").value) || 0;
   const burgerQty = parseInt(document.getElementById("burgerQty").value) || 0;
   const drinkQty = parseInt(document.getElementById("drinkQty").value) || 0;
-  // Remove commas and convert to number
-  const totalAmount = parseInt(document.getElementById("totalAmount").innerText.replace(/,/g, '')) || 0;
-  const paymentMethod = document.getElementById("payment").value; // 'cash' or 'card'
+  
+  // Calculate total without commas
+  const total = (falafelQty * 45000) + (burgerQty * 80000) + (drinkQty * 25000);
 
   return {
     invoiceNumber,
@@ -127,33 +127,27 @@ function collectFormData() {
         total: drinkQty * 25000
       }
     },
-    totalAmount,
-    paymentMethod,
-    timestamp: new Date().toISOString()
+    totalAmount: total,
+    paymentMethod: document.getElementById("payment").value
   };
 }
 
 // Function to send data to Google Sheets
 async function sendToGoogleSheets(data) {
-  // Replace with your Google Apps Script Web App URL
   const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzEezL49X62QMDkP2lXoXwoiniQoQZTsmvKU9Up7Q7bQ55-u1UcbYOmTzmeAwee6v3D3Q/exec';
   
   try {
-    // Ensure totalAmount is a clean number without commas
-    const cleanData = {
-      ...data,
-      totalAmount: parseInt(String(data.totalAmount).replace(/,/g, '')) || 0
-    };
-
     const response = await fetch(GOOGLE_SHEETS_URL, {
       method: 'POST',
       mode: 'no-cors',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(cleanData)
+      body: JSON.stringify(data)
     });
 
+    // Since we're using no-cors, we won't get a meaningful response
+    // We'll assume success if we get here
     return true;
   } catch (error) {
     console.error('Error sending data to Google Sheets:', error);
@@ -191,6 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let count = parseInt(qty.value) || 0;
         total += price * count;
       });
+      // Display formatted total
       document.getElementById("totalAmount").innerText = total.toLocaleString("fa-IR");
     });
   });
