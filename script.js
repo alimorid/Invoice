@@ -1,32 +1,85 @@
-function getEffectiveDate() {
+function getHijriShamsiDate() {
   const now = new Date();
-  const offset = 7 * 60 * 60 * 1000; // 7 ساعت به میلی‌ثانیه
-  const shifted = new Date(now.getTime() - offset);
-  return shifted.toLocaleDateString("fa-IR-u-nu-latn"); // مثل: 1403/03/02
+  // Adjust date to consider 7am as start of new day
+  // If it's before 7am, we're still in "yesterday's" business day
+  const businessDayOffset = 7; // 7am cutoff
+  const currentHour = now.getHours();
+  const isBeforeCutoff = currentHour < businessDayOffset;
+  
+  // If it's before 7am, subtract one day to get "yesterday's" business date
+  if (isBeforeCutoff) {
+    now.setDate(now.getDate() - 1);
+  }
+  
+  // Get date in format: 1403/01/15
+  const dateStr = now.toLocaleDateString("fa-IR-u-nu-latn");
+  
+  // Remove slashes and convert to YYYYMMDD format
+  return dateStr.replace(/\//g, '');
 }
 
-function getInvoiceNumber() {
-  const today = getEffectiveDate();
-  const storedData = localStorage.getItem("todayInvoice");
-  
-  // If no data exists in localStorage, initialize with number 1
+function generateInvoiceNumber() {
+  const today = getHijriShamsiDate(); // Format: YYYYMMDD
+  const storedData = localStorage.getItem("invoiceCounter");
+  let dailyCounter;
+
   if (!storedData) {
-    const initialData = { date: today, count: 1 };
-    localStorage.setItem("todayInvoice", JSON.stringify(initialData));
-    return 1;
-  }
-
-  const current = JSON.parse(storedData);
-
-  if (current.date !== today) {
-    // شروع از 1 در روز جدید (بر اساس ساعت 7 صبح)
-    localStorage.setItem("todayInvoice", JSON.stringify({ date: today, count: 1 }));
-    return 1;
+    // First invoice ever
+    dailyCounter = {
+      date: today,
+      count: 1
+    };
   } else {
-    current.count += 1;
-    localStorage.setItem("todayInvoice", JSON.stringify(current));
-    return current.count;
+    const data = JSON.parse(storedData);
+    if (data.date !== today) {
+      // New day, reset counter
+      dailyCounter = {
+        date: today,
+        count: 1
+      };
+    } else {
+      // Same day, increment counter
+      dailyCounter = {
+        date: today,
+        count: data.count + 1
+      };
+    }
   }
+
+  // Save the updated counter
+  localStorage.setItem("invoiceCounter", JSON.stringify(dailyCounter));
+
+  // Format counter to 3 digits (001, 002, etc.)
+  const counterStr = dailyCounter.count.toString().padStart(3, '0');
+  
+  // Create the full invoice number
+  const invoiceNumber = today + counterStr;
+
+  // Save this invoice to history
+  saveInvoiceToHistory(invoiceNumber);
+  
+  return invoiceNumber;
+}
+
+function saveInvoiceToHistory(invoiceNumber) {
+  // Get existing history or initialize empty array
+  const history = JSON.parse(localStorage.getItem("invoiceHistory") || "[]");
+  
+  // Add new invoice with timestamp
+  history.push({
+    number: invoiceNumber,
+    timestamp: new Date().toISOString(),
+    // You can add more details here like total amount, items, etc.
+  });
+  
+  // Save back to localStorage
+  localStorage.setItem("invoiceHistory", JSON.stringify(history));
+}
+
+// Function to get all invoices for a specific date
+function getInvoicesForDate(date) {
+  const history = JSON.parse(localStorage.getItem("invoiceHistory") || "[]");
+  return history.filter(invoice => invoice.number.startsWith(date));
 }
 
 // Wait for DOM to be fully loaded
@@ -49,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Add click event listener to submit button
   document.getElementById("submitBtn").addEventListener("click", function() {
-    const number = getInvoiceNumber();
-    document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${number}`;
+    const invoiceNumber = generateInvoiceNumber();
+    document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${invoiceNumber}`;
   });
 }); 
