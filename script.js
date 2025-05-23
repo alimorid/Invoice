@@ -96,6 +96,64 @@ function getLastInvoiceNumber() {
   return history[history.length - 1].number;
 }
 
+// Function to collect form data
+function collectFormData() {
+  const invoiceNumber = document.getElementById("invoiceNumber").innerText.split(": ")[1];
+  const date = document.getElementById("date").innerText;
+  const falafelQty = parseInt(document.getElementById("falafelQty").value) || 0;
+  const burgerQty = parseInt(document.getElementById("burgerQty").value) || 0;
+  const drinkQty = parseInt(document.getElementById("drinkQty").value) || 0;
+  const totalAmount = document.getElementById("totalAmount").innerText;
+  const paymentMethod = document.getElementById("payment").value; // 'cash' or 'card'
+
+  return {
+    invoiceNumber,
+    date,
+    items: {
+      falafel: {
+        quantity: falafelQty,
+        price: 45000,
+        total: falafelQty * 45000
+      },
+      burger: {
+        quantity: burgerQty,
+        price: 80000,
+        total: burgerQty * 80000
+      },
+      drink: {
+        quantity: drinkQty,
+        price: 25000,
+        total: drinkQty * 25000
+      }
+    },
+    totalAmount,
+    paymentMethod,
+    timestamp: new Date().toISOString()
+  };
+}
+
+// Function to send data to Google Sheets
+async function sendToGoogleSheets(data) {
+  // Replace with your Google Apps Script Web App URL
+  const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzZdJwD_PU01aTd5Ie76bJ4XdCq2ud_JQQT8Vfkj5TX4nvXA2k0PHnSsbxJ_00RpmqecA/exec';
+  
+  try {
+    const response = await fetch(GOOGLE_SHEETS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    });
+
+    return true;
+  } catch (error) {
+    console.error('Error sending data to Google Sheets:', error);
+    return false;
+  }
+}
+
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
   // Set current date
@@ -119,8 +177,21 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Add click event listener to submit button
-  document.getElementById("submitBtn").addEventListener("click", function() {
+  document.getElementById("submitBtn").addEventListener("click", async function() {
     const invoiceNumber = generateInvoiceNumber();
     document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${invoiceNumber}`;
+
+    // Collect and send form data
+    const formData = collectFormData();
+    const success = await sendToGoogleSheets(formData);
+    
+    if (success) {
+      alert('فاکتور با موفقیت ثبت شد');
+      // Clear form
+      document.querySelectorAll(".quantity").forEach(input => input.value = "");
+      document.getElementById("totalAmount").innerText = "0";
+    } else {
+      alert('خطا در ثبت فاکتور');
+    }
   });
 }); 
