@@ -82,10 +82,25 @@ function getInvoicesForDate(date) {
   return history.filter(invoice => invoice.number.startsWith(date));
 }
 
+// Function to get the last generated invoice number
+function getLastInvoiceNumber() {
+  const history = JSON.parse(localStorage.getItem("invoiceHistory") || "[]");
+  if (history.length === 0) {
+    return null;
+  }
+  return history[history.length - 1].number;
+}
+
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
   // Set current date
   document.getElementById("date").innerText = new Date().toLocaleDateString("fa-IR");
+
+  // Display last invoice number if it exists
+  const lastInvoice = getLastInvoiceNumber();
+  if (lastInvoice) {
+    document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${lastInvoice}`;
+  }
 
   // Add event listeners to quantity inputs
   document.querySelectorAll(".quantity").forEach(input => {
