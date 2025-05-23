@@ -7,7 +7,16 @@ function getEffectiveDate() {
 
 function getInvoiceNumber() {
   const today = getEffectiveDate();
-  const current = JSON.parse(localStorage.getItem("todayInvoice") || "{}");
+  const storedData = localStorage.getItem("todayInvoice");
+  
+  // If no data exists in localStorage, initialize with number 1
+  if (!storedData) {
+    const initialData = { date: today, count: 1 };
+    localStorage.setItem("todayInvoice", JSON.stringify(initialData));
+    return 1;
+  }
+
+  const current = JSON.parse(storedData);
 
   if (current.date !== today) {
     // شروع از 1 در روز جدید (بر اساس ساعت 7 صبح)
