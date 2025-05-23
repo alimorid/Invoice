@@ -135,7 +135,7 @@ function collectFormData() {
 // Function to send data to Google Sheets
 async function sendToGoogleSheets(data) {
   // Replace with your Google Apps Script Web App URL
-  const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzZdJwD_PU01aTd5Ie76bJ4XdCq2ud_JQQT8Vfkj5TX4nvXA2k0PHnSsbxJ_00RpmqecA/exec';
+  const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzEezL49X62QMDkP2lXoXwoiniQoQZTsmvKU9Up7Q7bQ55-u1UcbYOmTzmeAwee6v3D3Q/exec';
   
   try {
     const response = await fetch(GOOGLE_SHEETS_URL, {
@@ -152,6 +152,18 @@ async function sendToGoogleSheets(data) {
     console.error('Error sending data to Google Sheets:', error);
     return false;
   }
+}
+
+// Function to clear all form fields
+function clearForm() {
+  // Clear quantities
+  document.querySelectorAll(".quantity").forEach(input => input.value = "");
+  
+  // Reset total amount
+  document.getElementById("totalAmount").innerText = "0";
+  
+  // Reset payment method to default (first option)
+  document.getElementById("payment").selectedIndex = 0;
 }
 
 // Wait for DOM to be fully loaded
@@ -178,6 +190,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Add click event listener to submit button
   document.getElementById("submitBtn").addEventListener("click", async function() {
+    // Check if any quantity is entered
+    const hasQuantity = Array.from(document.querySelectorAll(".quantity"))
+      .some(input => parseInt(input.value) > 0);
+
+    if (!hasQuantity) {
+      alert('لطفا تعداد محصولات را وارد کنید');
+      return;
+    }
+
     const invoiceNumber = generateInvoiceNumber();
     document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${invoiceNumber}`;
 
@@ -187,9 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (success) {
       alert('فاکتور با موفقیت ثبت شد');
-      // Clear form
-      document.querySelectorAll(".quantity").forEach(input => input.value = "");
-      document.getElementById("totalAmount").innerText = "0";
+      clearForm(); // Clear all fields after successful submission
     } else {
       alert('خطا در ثبت فاکتور');
     }
