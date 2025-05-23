@@ -134,7 +134,7 @@ function collectFormData() {
 
 // Function to send data to Google Sheets
 async function sendToGoogleSheets(data) {
-  const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzEezL49X62QMDkP2lXoXwoiniQoQZTsmvKU9Up7Q7bQ55-u1UcbYOmTzmeAwee6v3D3Q/exec';
+  const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyzzy1Fv5LZWPjwpAK3pqz3bwRoHTscJriTOUDBL8oUtHTvyE01LFLwWEJ8dXQ5aIIqKQ/exec';
   
   try {
     const response = await fetch(GOOGLE_SHEETS_URL, {
