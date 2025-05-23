@@ -6,6 +6,7 @@
     <title>فاکتور فروش</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdn.jsdelivr.net/npm/vazirmatn@30.1.0/Vazirmatn-font-face.css" rel="stylesheet">
+    <script src="script.js"></script>
 </head>
 <body>
     <div class="invoice-container">
@@ -13,35 +14,7 @@
 
         <div class="header-info">
             <span>تاریخ: <span id="date"></span></span>
-<span id="invoiceNumber">در حال بارگذاری...</span>
-
-<script>
-  function getEffectiveDate() {
-    const now = new Date();
-    const offset = 7 * 60 * 60 * 1000; // 7 ساعت به میلی‌ثانیه
-    const shifted = new Date(now.getTime() - offset);
-    return shifted.toLocaleDateString("fa-IR-u-nu-latn"); // مثل: 1403/03/02
-  }
-
-  function getInvoiceNumber() {
-    const today = getEffectiveDate();
-    const current = JSON.parse(localStorage.getItem("todayInvoice") || "{}");
-
-    if (current.date !== today) {
-      // شروع از 1 در روز جدید (بر اساس ساعت 7 صبح)
-      localStorage.setItem("todayInvoice", JSON.stringify({ date: today, count: 1 }));
-      return 1;
-    } else {
-      current.count += 1;
-      localStorage.setItem("todayInvoice", JSON.stringify(current));
-      return current.count;
-    }
-  }
-
-  const number = getInvoiceNumber();
-  document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${number}`;
-</script>
-
+            <span id="invoiceNumber">در حال بارگذاری...</span>
         </div>
 
         <div class="divider">محصولات</div>
@@ -88,21 +61,5 @@
 
         <button type="submit" id="submitBtn">ثبت فاکتور</button>
     </div>
-
-    <script>
-        document.getElementById("date").innerText = new Date().toLocaleDateString("fa-IR");
-
-        document.querySelectorAll(".quantity").forEach(input => {
-            input.addEventListener("input", () => {
-                let total = 0;
-                document.querySelectorAll(".quantity").forEach(qty => {
-                    let price = parseInt(qty.getAttribute("data-price"));
-                    let count = parseInt(qty.value) || 0;
-                    total += price * count;
-                });
-                document.getElementById("totalAmount").innerText = total.toLocaleString("fa-IR");
-            });
-        });
-    </script>
 </body>
 </html>
