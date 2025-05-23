@@ -103,9 +103,10 @@ function collectFormData() {
   const falafelQty = parseInt(document.getElementById("falafelQty").value) || 0;
   const burgerQty = parseInt(document.getElementById("burgerQty").value) || 0;
   const drinkQty = parseInt(document.getElementById("drinkQty").value) || 0;
+  const adjustment = parseInt(document.getElementById("adjustmentAmount").value) || 0;
   
   // Calculate total without commas
-  const total = (falafelQty * 45000) + (burgerQty * 80000) + (drinkQty * 25000);
+  const total = (falafelQty * 45000) + (burgerQty * 80000) + (drinkQty * 25000) + adjustment;
 
   return {
     invoiceNumber,
@@ -127,6 +128,7 @@ function collectFormData() {
         total: drinkQty * 25000
       }
     },
+    adjustment: adjustment,
     totalAmount: total,
     paymentMethod: document.getElementById("payment").value
   };
@@ -160,6 +162,9 @@ function clearForm() {
   // Clear quantities
   document.querySelectorAll(".quantity").forEach(input => input.value = "");
   
+  // Clear adjustment
+  document.getElementById("adjustmentAmount").value = "";
+  
   // Reset total amount
   document.getElementById("totalAmount").innerText = "0";
   
@@ -178,17 +183,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Add event listeners to quantity inputs
   document.querySelectorAll(".quantity").forEach(input => {
-    input.addEventListener("input", () => {
-      let total = 0;
-      document.querySelectorAll(".quantity").forEach(qty => {
-        let price = parseInt(qty.getAttribute("data-price"));
-        let count = parseInt(qty.value) || 0;
-        total += price * count;
-      });
-      // Display formatted total
-      document.getElementById("totalAmount").innerText = total.toLocaleString("fa-IR");
-    });
+    input.addEventListener("input", calculateTotal);
   });
+
+  // Add event listener to adjustment input
+  document.getElementById("adjustmentAmount").addEventListener("input", calculateTotal);
+
+  function calculateTotal() {
+    let total = 0;
+    // Calculate products total
+    document.querySelectorAll(".quantity").forEach(qty => {
+      let price = parseInt(qty.getAttribute("data-price"));
+      let count = parseInt(qty.value) || 0;
+      total += price * count;
+    });
+
+    // Add or subtract adjustment amount
+    const adjustmentInput = document.getElementById("adjustmentAmount");
+    const adjustment = parseInt(adjustmentInput.value) || 0;
+    total += adjustment;
+
+    // Display formatted total
+    document.getElementById("totalAmount").innerText = total.toLocaleString("fa-IR");
+  }
 
   // Add click event listener to submit button
   document.getElementById("submitBtn").addEventListener("click", async function() {

@@ -120,6 +120,16 @@ button:hover {
     color: #00ff88;
 }
 
+.adjustment {
+    width: 150px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+    text-align: center;
+    direction: ltr;
+}
+
 @media (max-width: 600px) {
     .invoice-container {
         width: 95%;
