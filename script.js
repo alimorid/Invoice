@@ -103,7 +103,8 @@ function collectFormData() {
   const falafelQty = parseInt(document.getElementById("falafelQty").value) || 0;
   const burgerQty = parseInt(document.getElementById("burgerQty").value) || 0;
   const drinkQty = parseInt(document.getElementById("drinkQty").value) || 0;
-  const totalAmount = document.getElementById("totalAmount").innerText;
+  // Remove commas and convert to number
+  const totalAmount = parseInt(document.getElementById("totalAmount").innerText.replace(/,/g, '')) || 0;
   const paymentMethod = document.getElementById("payment").value; // 'cash' or 'card'
 
   return {
@@ -138,13 +139,19 @@ async function sendToGoogleSheets(data) {
   const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzEezL49X62QMDkP2lXoXwoiniQoQZTsmvKU9Up7Q7bQ55-u1UcbYOmTzmeAwee6v3D3Q/exec';
   
   try {
+    // Ensure totalAmount is a clean number without commas
+    const cleanData = {
+      ...data,
+      totalAmount: parseInt(String(data.totalAmount).replace(/,/g, '')) || 0
+    };
+
     const response = await fetch(GOOGLE_SHEETS_URL, {
       method: 'POST',
       mode: 'no-cors',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(cleanData)
     });
 
     return true;
