@@ -18,6 +18,11 @@ function getHijriShamsiDate() {
   return dateStr.replace(/\//g, '');
 }
 
+function getFirstInvoiceNumber() {
+  const today = getHijriShamsiDate();
+  return today + "001";
+}
+
 function generateInvoiceNumber() {
   const today = getHijriShamsiDate(); // Format: YYYYMMDD
   const storedData = localStorage.getItem("invoiceCounter");
@@ -86,7 +91,7 @@ function getInvoicesForDate(date) {
 function getLastInvoiceNumber() {
   const history = JSON.parse(localStorage.getItem("invoiceHistory") || "[]");
   if (history.length === 0) {
-    return null;
+    return getFirstInvoiceNumber();
   }
   return history[history.length - 1].number;
 }
@@ -96,11 +101,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Set current date
   document.getElementById("date").innerText = new Date().toLocaleDateString("fa-IR");
 
-  // Display last invoice number if it exists
-  const lastInvoice = getLastInvoiceNumber();
-  if (lastInvoice) {
-    document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${lastInvoice}`;
-  }
+  // Display last invoice number or first invoice number if none exists
+  const invoiceNumber = getLastInvoiceNumber();
+  document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${invoiceNumber}`;
 
   // Add event listeners to quantity inputs
   document.querySelectorAll(".quantity").forEach(input => {
