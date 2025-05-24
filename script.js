@@ -35,47 +35,18 @@ function getFirstInvoiceNumber() {
 }
 
 function generateInvoiceNumber() {
-  const today = getHijriShamsiDate(); // Format: YYYYMMDD
-  const storedData = localStorage.getItem("invoiceCounter");
-  let dailyCounter;
-
-  if (!storedData) {
-    // First invoice ever
-    dailyCounter = {
-      date: today,
-      count: 1
-    };
-  } else {
-    const data = JSON.parse(storedData);
-    if (data.date !== today) {
-      // New day, reset counter
-      dailyCounter = {
-        date: today,
-        count: 1
-      };
-    } else {
-      // Same day, increment counter
-      dailyCounter = {
-        date: today,
-        count: data.count
-      };
-    }
-  }
-
-  // Format counter to 3 digits (001, 002, etc.)
-  const counterStr = dailyCounter.count.toString().padStart(3, '0');
+  // Get the current invoice number from display
+  const currentNumber = document.getElementById("invoiceNumber").innerText.split(": ")[1];
   
-  // Create the full invoice number
-  const invoiceNumber = today + counterStr;
-
-  // Save this invoice to history
-  saveInvoiceToHistory(invoiceNumber);
-
-  // Save the updated counter with incremented count for next invoice
-  dailyCounter.count += 1;
-  localStorage.setItem("invoiceCounter", JSON.stringify(dailyCounter));
+  // Extract the base (first 7 digits) and counter (last 4 digits)
+  const base = currentNumber.slice(0, -4);
+  const counter = parseInt(currentNumber.slice(-4));
   
-  return invoiceNumber;
+  // Increment counter and pad to 4 digits
+  const newCounter = (counter + 1).toString().padStart(4, '0');
+  
+  // Return new invoice number
+  return base + newCounter;
 }
 
 function saveInvoiceToHistory(invoiceNumber) {
@@ -188,21 +159,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Set current date
   document.getElementById("date").innerText = getDisplayDate();
 
-  // Display first invoice number by getting the current counter without incrementing
-  const today = getHijriShamsiDate();
-  const storedData = localStorage.getItem("invoiceCounter");
-  let count = 1;
-  
-  if (storedData) {
-    const data = JSON.parse(storedData);
-    if (data.date === today) {
-      count = data.count;
-    }
-  }
-  
-  const counterStr = count.toString().padStart(3, '0');
-  const firstInvoiceNumber = today + counterStr;
-  document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${firstInvoiceNumber}`;
+  // Display first invoice number
+  const invoiceNumber = getFirstInvoiceNumber();
+  document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${invoiceNumber}`;
 
   // Add event listeners to quantity inputs
   document.querySelectorAll(".quantity").forEach(input => {
