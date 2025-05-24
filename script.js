@@ -57,13 +57,10 @@ function generateInvoiceNumber() {
       // Same day, increment counter
       dailyCounter = {
         date: today,
-        count: data.count + 1
+        count: data.count
       };
     }
   }
-
-  // Save the updated counter
-  localStorage.setItem("invoiceCounter", JSON.stringify(dailyCounter));
 
   // Format counter to 3 digits (001, 002, etc.)
   const counterStr = dailyCounter.count.toString().padStart(3, '0');
@@ -73,6 +70,10 @@ function generateInvoiceNumber() {
 
   // Save this invoice to history
   saveInvoiceToHistory(invoiceNumber);
+
+  // Save the updated counter with incremented count for next invoice
+  dailyCounter.count += 1;
+  localStorage.setItem("invoiceCounter", JSON.stringify(dailyCounter));
   
   return invoiceNumber;
 }
@@ -187,9 +188,21 @@ document.addEventListener('DOMContentLoaded', function() {
   // Set current date
   document.getElementById("date").innerText = getDisplayDate();
 
-  // Display first invoice number
-  const invoiceNumber = getFirstInvoiceNumber();
-  document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${invoiceNumber}`;
+  // Display first invoice number by getting the current counter without incrementing
+  const today = getHijriShamsiDate();
+  const storedData = localStorage.getItem("invoiceCounter");
+  let count = 1;
+  
+  if (storedData) {
+    const data = JSON.parse(storedData);
+    if (data.date === today) {
+      count = data.count;
+    }
+  }
+  
+  const counterStr = count.toString().padStart(3, '0');
+  const firstInvoiceNumber = today + counterStr;
+  document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${firstInvoiceNumber}`;
 
   // Add event listeners to quantity inputs
   document.querySelectorAll(".quantity").forEach(input => {
@@ -228,18 +241,14 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    // Generate new invoice number before collecting form data
-    const newInvoiceNumber = generateInvoiceNumber();
-    document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${newInvoiceNumber}`;
-
-    // Collect and send form data
+    // Collect form data with current invoice number
     const formData = collectFormData();
     const success = await sendToGoogleSheets(formData);
     
     if (success) {
       alert('فاکتور با موفقیت ثبت شد');
       clearForm();
-      // Generate next invoice number after successful submission
+      // After successful submission, generate and display next invoice number
       const nextInvoiceNumber = generateInvoiceNumber();
       document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${nextInvoiceNumber}`;
     } else {
