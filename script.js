@@ -109,8 +109,6 @@ function getLastInvoiceNumber() {
 
 // Function to collect form data
 function collectFormData() {
-  const invoiceNumber = generateInvoiceNumber(); // Generate new invoice number when collecting data
-  document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${invoiceNumber}`;
   const date = document.getElementById("date").innerText;
   const falafelQty = parseInt(document.getElementById("falafelQty").value) || 0;
   const burgerQty = parseInt(document.getElementById("burgerQty").value) || 0;
@@ -121,7 +119,7 @@ function collectFormData() {
   const total = (falafelQty * 45000) + (burgerQty * 80000) + (drinkQty * 25000) + adjustment;
 
   return {
-    invoiceNumber,
+    invoiceNumber: document.getElementById("invoiceNumber").innerText.split(": ")[1],
     date,
     items: {
       falafel: {
@@ -189,8 +187,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // Set current date
   document.getElementById("date").innerText = getDisplayDate();
 
-  // Display last invoice number or first invoice number if none exists
-  const invoiceNumber = getLastInvoiceNumber();
+  // Display first invoice number
+  const invoiceNumber = getFirstInvoiceNumber();
   document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${invoiceNumber}`;
 
   // Add event listeners to quantity inputs
@@ -230,13 +228,20 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
+    // Generate new invoice number before collecting form data
+    const newInvoiceNumber = generateInvoiceNumber();
+    document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${newInvoiceNumber}`;
+
     // Collect and send form data
-    const formData = collectFormData(); // This will now generate the new invoice number
+    const formData = collectFormData();
     const success = await sendToGoogleSheets(formData);
     
     if (success) {
       alert('فاکتور با موفقیت ثبت شد');
-      clearForm(); // Clear all fields after successful submission
+      clearForm();
+      // Generate next invoice number after successful submission
+      const nextInvoiceNumber = generateInvoiceNumber();
+      document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${nextInvoiceNumber}`;
     } else {
       alert('خطا در ثبت فاکتور');
     }
