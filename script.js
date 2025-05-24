@@ -11,11 +11,22 @@ function getHijriShamsiDate() {
     now.setDate(now.getDate() - 1);
   }
   
-  // Get date in format: 1403/01/15
-  const dateStr = now.toLocaleDateString("fa-IR-u-nu-latn");
+  // Get date in format: ۱۴۰۳/۰۱/۱۵
+  const dateStr = now.toLocaleDateString("fa-IR");
   
-  // Remove slashes and convert to YYYYMMDD format
-  return dateStr.replace(/\//g, '');
+  // Convert Persian numbers to English numbers and remove slashes
+  const convertToEnglishNumber = (str) => {
+    const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    return str.replace(/[۰-۹]/g, d => persianNumbers.indexOf(d).toString());
+  };
+  
+  // Convert to English numbers and remove slashes
+  return convertToEnglishNumber(dateStr).replace(/\//g, '');
+}
+
+// For displaying the date in Persian format
+function getDisplayDate() {
+  return new Date().toLocaleDateString("fa-IR");
 }
 
 function getFirstInvoiceNumber() {
@@ -175,7 +186,7 @@ function clearForm() {
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
   // Set current date
-  document.getElementById("date").innerText = new Date().toLocaleDateString("fa-IR");
+  document.getElementById("date").innerText = getDisplayDate();
 
   // Display last invoice number or first invoice number if none exists
   const invoiceNumber = getLastInvoiceNumber();
