@@ -200,16 +200,22 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    // Collect form data with current invoice number
+    // Generate next invoice number before collecting form data
+    const nextInvoiceNumber = generateInvoiceNumber();
+    
+    // Update the display with the new number
+    document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${nextInvoiceNumber}`;
+
+    // Collect and send form data
     const formData = collectFormData();
     const success = await sendToGoogleSheets(formData);
     
     if (success) {
       alert('فاکتور با موفقیت ثبت شد');
       clearForm();
-      // After successful submission, generate and display next invoice number
-      const nextInvoiceNumber = generateInvoiceNumber();
-      document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${nextInvoiceNumber}`;
+      // Generate and display next invoice number
+      const newInvoiceNumber = generateInvoiceNumber();
+      document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${newInvoiceNumber}`;
     } else {
       alert('خطا در ثبت فاکتور');
     }
