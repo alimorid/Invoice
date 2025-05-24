@@ -24,9 +24,9 @@ function getHijriShamsiDate() {
   return convertToEnglishNumber(dateStr).replace(/\//g, '');
 }
 
-// For displaying the date in Persian format
+// For displaying the date in English format
 function getDisplayDate() {
-  return new Date().toLocaleDateString("fa-IR");
+  return new Date().toLocaleDateString("fa-IR-u-nu-latn");
 }
 
 function getFirstInvoiceNumber() {
@@ -109,7 +109,8 @@ function getLastInvoiceNumber() {
 
 // Function to collect form data
 function collectFormData() {
-  const invoiceNumber = document.getElementById("invoiceNumber").innerText.split(": ")[1];
+  const invoiceNumber = generateInvoiceNumber(); // Generate new invoice number when collecting data
+  document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${invoiceNumber}`;
   const date = document.getElementById("date").innerText;
   const falafelQty = parseInt(document.getElementById("falafelQty").value) || 0;
   const burgerQty = parseInt(document.getElementById("burgerQty").value) || 0;
@@ -215,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
     total += adjustment;
 
     // Display formatted total
-    document.getElementById("totalAmount").innerText = total.toLocaleString("fa-IR");
+    document.getElementById("totalAmount").innerText = total.toLocaleString("fa-IR-u-nu-latn");
   }
 
   // Add click event listener to submit button
@@ -229,11 +230,8 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    const invoiceNumber = generateInvoiceNumber();
-    document.getElementById("invoiceNumber").innerText = `شماره فاکتور: ${invoiceNumber}`;
-
     // Collect and send form data
-    const formData = collectFormData();
+    const formData = collectFormData(); // This will now generate the new invoice number
     const success = await sendToGoogleSheets(formData);
     
     if (success) {
