@@ -88,7 +88,7 @@ function collectFormData() {
   const adjustment = parseInt(document.getElementById("adjustmentAmount").value) || 0;
   
   // Calculate total without commas
-  const total = (falafelQty * 45000) + (burgerQty * 80000) + (drinkQty * 25000) + adjustment;
+  const total = (falafelQty * 55000) + (burgerQty * 80000) + (drinkQty * 25000) + adjustment;
 
   return {
     invoiceNumber: document.getElementById("invoiceNumber").innerText.split(": ")[1],
@@ -96,8 +96,8 @@ function collectFormData() {
     items: {
       falafel: {
         quantity: falafelQty,
-        price: 45000,
-        total: falafelQty * 45000
+        price: 55000,
+        total: falafelQty * 55000
       },
       burger: {
         quantity: burgerQty,
